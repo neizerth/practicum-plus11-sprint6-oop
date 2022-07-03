@@ -1,9 +1,12 @@
-export class TodoListForm {
+import { EventEmitter } from "./EventEmitter";
+
+export class TodoListForm extends EventEmitter {
   static _template = document.querySelector('#todolist-form-template').content;
 
-  constructor(addItem, api) {
-    this._addItem = addItem;
+  constructor(api) {
+    super();
     this._api = api;
+    this._createTaskListeners = [];
   }
 
   _submitHandler = (evt) => {
@@ -16,7 +19,7 @@ export class TodoListForm {
         name
       })
       .then((res) => {
-        this._addItem(res);
+        this._emit('createTask', res);
       })
       .catch((err) => {
         console.log('Ошибка при создании задания', err);

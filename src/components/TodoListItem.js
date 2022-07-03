@@ -1,10 +1,17 @@
-export class TodoListItem {
+import {EventEmitter} from "./EventEmitter";
+
+export class TodoListItem extends EventEmitter {
   static _template = document.querySelector('#todolist-item-template').content;
 
-  constructor(todo, addItem, api) {
+  constructor(todo, api) {
+    super();
     this._todo = todo;
-    this._addItem = addItem;
+    this._createTaskListeners = [];
     this._api = api;
+  }
+
+  onCreateTask(fn) {
+    this._createTaskListeners.push(fn);
   }
 
   _delClickHandler = () => {
@@ -24,7 +31,7 @@ export class TodoListItem {
         name: this._todo.name,
       })
       .then((res) => {
-        this._addItem(res);
+        this._emit('createTask', res);
       })
       .catch((err) => {
         console.log('Ошибка при копировании задания', err);
